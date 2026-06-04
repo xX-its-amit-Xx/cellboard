@@ -202,9 +202,12 @@ read_input <- function(path, type = c("auto", "10x", "sce", "seurat"), ...) {
 
 #' Load the bundled example PBMC dataset
 #'
-#' A small (~250 cell) public-style PBMC subset shipped with the package, handy
-#' for trying the dashboard and for examples. See `data-raw`/`dev` for how it is
-#' generated.
+#' Returns a stratified 238-cell subset of the **real** 10x Genomics pbmc3k
+#' dataset (hg19, Cell Ranger v2 output), with 9,936 expressed genes. The
+#' subset preserves the biologically realistic QC structure of the full dataset:
+#' a healthy bulk (~2% mitochondrial reads), a stressed tail, and high-UMI
+#' outliers, making it suitable for demonstrating cellboard's QC workflow.
+#' Generated from the full 2,700-cell dataset by `dev/make_example_data_real.R`.
 #'
 #' @param as A character scalar: `"sce"` (default) returns a
 #'   SingleCellExperiment; `"10x_path"` returns the path to the bundled 10x

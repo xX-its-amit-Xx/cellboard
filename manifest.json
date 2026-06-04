@@ -6432,26 +6432,314 @@
     }
   },
   "files": {
-    ".Rbuildignore": {
-      "checksum": "17f847933966777e7397760158d3dc05"
-    },
     "app.R": {
       "checksum": "29cbb71a649961dc0c48de92390b8e7b"
     },
+    "cellboard.Rcheck/00_pkg_src/cellboard/DESCRIPTION": {
+      "checksum": "acd85cdc0dc16b09608ddfbeb2d5d51e"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/inst/extdata/pbmc_small_10x/barcodes.tsv.gz": {
+      "checksum": "fa05dc8efaeb2b0c18188624a41711bb"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/inst/extdata/pbmc_small_10x/features.tsv.gz": {
+      "checksum": "dcec2b48a7a0c47dc11b4e83f33923ea"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/inst/extdata/pbmc_small_10x/matrix.mtx.gz": {
+      "checksum": "661c5f9b8c6ad6490caa6bb0a917a19e"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/inst/extdata/pbmc_small_sce.rds": {
+      "checksum": "39851726df97762a5fa90312826f4f84"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/inst/report/qc_report.Rmd": {
+      "checksum": "412fe41f287eca56fb3186add9865d2b"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/app_server.Rd": {
+      "checksum": "917398f012ecae4894119a685545f9a2"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/app_ui.Rd": {
+      "checksum": "6c69bed224f566951458030501ac6685"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/apply_qc_filter.Rd": {
+      "checksum": "aeb40a77e23a51126b70551268e5f6ad"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/as_sce.Rd": {
+      "checksum": "6441565ac5a43abd04eb8dcc86d42c94"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/cellboard-package.Rd": {
+      "checksum": "8da7dd7886151fd0e82cf742dd1d519f"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/compute_qc.Rd": {
+      "checksum": "af13ef25b0bc05215b4b8f3b986e268c"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/default_thresholds.Rd": {
+      "checksum": "ad9baad9810c5155a68259963844f920"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/detect_input_type.Rd": {
+      "checksum": "9862dd9d20ca1fe2ce1e71dedb6da7b1"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/example_sce.Rd": {
+      "checksum": "7a977ba9a63be0a1a7245b406aad9be2"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/figures/logo.svg": {
+      "checksum": "2362b3f245694a4dbf4d57eefea049e3"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/figures/qc-distributions.png": {
+      "checksum": "729ce2c86a92682206d684fc0f953775"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/figures/qc-scatter.png": {
+      "checksum": "7900128eeb5fa6e9604814ea43c50937"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/filter_cells_df.Rd": {
+      "checksum": "ed041983a743d2dd809f38035fa40ff3"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/qc_knee.Rd": {
+      "checksum": "9b166b2673d154ccd9ab7d9b42b7cf87"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/qc_metric_cols.Rd": {
+      "checksum": "de01bc9294d2e3f651bad2231feb6d36"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/qc_scatter.Rd": {
+      "checksum": "fb7a519b1845ae8b2d70a1a7f5320782"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/qc_thresholds.Rd": {
+      "checksum": "25f8db3de9c1ca5ac2f4d74cd89afada"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/qc_violin.Rd": {
+      "checksum": "f1f139bc15acb154043dfdc3d2cbe624"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/read_10x.Rd": {
+      "checksum": "f5bfa16328451a297c7a817ecef8cfa0"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/read_input.Rd": {
+      "checksum": "361f64e531fcfd10a504a58b205c2ec7"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/read_sce.Rd": {
+      "checksum": "fc691e1df2f681d8b3d32c4d2282ba82"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/read_seurat.Rd": {
+      "checksum": "5f40fc5e5d34949a25e3e81101718208"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/render_qc_report.Rd": {
+      "checksum": "94735332b26d0b7efc7f35c6a69282dc"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/run_app.Rd": {
+      "checksum": "67517c744152e9a56241ae2dce8ec5ba"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/man/summarise_qc.Rd": {
+      "checksum": "ca3bb533b11664382d8e001ead3f6ab8"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/NAMESPACE": {
+      "checksum": "b9a02c1f6ad78d792f1c74ddb6537915"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/app_server.R": {
+      "checksum": "a55281e44d889d08e624f0104968b826"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/app_ui.R": {
+      "checksum": "f367fe4f08f3a6cab624e3dff63ebd56"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/cellboard-package.R": {
+      "checksum": "756ada3b5eb6101f816a9302c20de41f"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/io.R": {
+      "checksum": "8b9bd4033f58039da568c124af0a48f8"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/plots.R": {
+      "checksum": "1b8674085d6e7e191ac03de9d8973dc5"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/qc_metrics.R": {
+      "checksum": "041fb282be03aab68824bc177ffaefa0"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/report.R": {
+      "checksum": "97c2e4d0e435a1a6d583dd9213bc4e37"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/run_app.R": {
+      "checksum": "63e17de70ae53a9fde3f13e97adb1b65"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/R/utils.R": {
+      "checksum": "187fd5b52e797b097ee5eda1b2b0d908"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/README.md": {
+      "checksum": "698201c70905299eb555644529bae0ca"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat.R": {
+      "checksum": "5de2c1d070e1d8527290a7a0955f3d16"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/helper-cellboard.R": {
+      "checksum": "6f2a51d73185604b7eb9e29a7ebca01a"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/test-app.R": {
+      "checksum": "79983c3ce4ae5e3dc45659ad41ea1139"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/test-io.R": {
+      "checksum": "99d4d314e9468790e23d8d994e4413e7"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/test-plots.R": {
+      "checksum": "8754ebd6ab93037a8cf575e6f05a006d"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/test-qc-metrics.R": {
+      "checksum": "fe490e1ea769874384bcf22e8d8aad25"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/test-report.R": {
+      "checksum": "4e85634289ffedbe9d08b24a95c02cd1"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/test-seurat.R": {
+      "checksum": "a554be98354eadade8359bd13651ebb7"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/tests/testthat/test-thresholds.R": {
+      "checksum": "21f0d469ba3a8ba733d03cb86482a7b6"
+    },
+    "cellboard.Rcheck/00_pkg_src/cellboard/vignettes/cookbook.Rmd": {
+      "checksum": "7b37f7b4188cb63c960e5f5cf22bd030"
+    },
+    "cellboard.Rcheck/00check.log": {
+      "checksum": "ba2ead13f78e4f8977f74d13303ae645"
+    },
+    "cellboard.Rcheck/00install.out": {
+      "checksum": "feb158ce515ce69c8fd6358de82cf8e0"
+    },
+    "cellboard.Rcheck/cellboard-Ex.pdf": {
+      "checksum": "622bd7e2f5ff89dc8a6d30a6f6e60d2f"
+    },
+    "cellboard.Rcheck/cellboard-Ex.R": {
+      "checksum": "c82b61b16fd27a30085b7a1f0980f492"
+    },
+    "cellboard.Rcheck/cellboard-Ex.Rout": {
+      "checksum": "5dc4a9f1c282ccbc7eaee38e4ac4db8f"
+    },
+    "cellboard.Rcheck/cellboard/DESCRIPTION": {
+      "checksum": "ab15fa0eef876159eecc120c1fd3c231"
+    },
+    "cellboard.Rcheck/cellboard/extdata/pbmc_small_10x/barcodes.tsv.gz": {
+      "checksum": "fa05dc8efaeb2b0c18188624a41711bb"
+    },
+    "cellboard.Rcheck/cellboard/extdata/pbmc_small_10x/features.tsv.gz": {
+      "checksum": "dcec2b48a7a0c47dc11b4e83f33923ea"
+    },
+    "cellboard.Rcheck/cellboard/extdata/pbmc_small_10x/matrix.mtx.gz": {
+      "checksum": "661c5f9b8c6ad6490caa6bb0a917a19e"
+    },
+    "cellboard.Rcheck/cellboard/extdata/pbmc_small_sce.rds": {
+      "checksum": "39851726df97762a5fa90312826f4f84"
+    },
+    "cellboard.Rcheck/cellboard/help/aliases.rds": {
+      "checksum": "51eb2474392a4753aa1af3b8a4fa68b7"
+    },
+    "cellboard.Rcheck/cellboard/help/AnIndex": {
+      "checksum": "fefc3abf8390bbfc5de817c6f85b22ef"
+    },
+    "cellboard.Rcheck/cellboard/help/cellboard.rdb": {
+      "checksum": "eb268885054ba662b5999e22fb685c89"
+    },
+    "cellboard.Rcheck/cellboard/help/cellboard.rdx": {
+      "checksum": "c01bfcffe7196a47097659d4f27de525"
+    },
+    "cellboard.Rcheck/cellboard/help/figures/logo.svg": {
+      "checksum": "2362b3f245694a4dbf4d57eefea049e3"
+    },
+    "cellboard.Rcheck/cellboard/help/figures/qc-distributions.png": {
+      "checksum": "729ce2c86a92682206d684fc0f953775"
+    },
+    "cellboard.Rcheck/cellboard/help/figures/qc-scatter.png": {
+      "checksum": "7900128eeb5fa6e9604814ea43c50937"
+    },
+    "cellboard.Rcheck/cellboard/help/paths.rds": {
+      "checksum": "da5ccbb5c194ea7d3c46fc2f6c734496"
+    },
+    "cellboard.Rcheck/cellboard/html/00Index.html": {
+      "checksum": "41fc858d2a943f6f6808100d17ac64e9"
+    },
+    "cellboard.Rcheck/cellboard/html/R.css": {
+      "checksum": "ee41876c0116916bb04bcf4fe3e43d78"
+    },
+    "cellboard.Rcheck/cellboard/INDEX": {
+      "checksum": "4bc3382e7acd22e4010020822371d079"
+    },
+    "cellboard.Rcheck/cellboard/Meta/features.rds": {
+      "checksum": "50a9fa3e1aa2c47fa7bdbd6e6bb8974e"
+    },
+    "cellboard.Rcheck/cellboard/Meta/hsearch.rds": {
+      "checksum": "7c638cb6be2d8b9b088b40ffd028c65c"
+    },
+    "cellboard.Rcheck/cellboard/Meta/links.rds": {
+      "checksum": "9f3ffc7b5772be0f82bcba39c11568fa"
+    },
+    "cellboard.Rcheck/cellboard/Meta/nsInfo.rds": {
+      "checksum": "ad0899499d5153b0abcb08e9dffbb24d"
+    },
+    "cellboard.Rcheck/cellboard/Meta/package.rds": {
+      "checksum": "f5db8b6b4a21ac85c735cc69b595a566"
+    },
+    "cellboard.Rcheck/cellboard/Meta/Rd.rds": {
+      "checksum": "603dcea5ca330ce38f815637ec0c8331"
+    },
+    "cellboard.Rcheck/cellboard/NAMESPACE": {
+      "checksum": "b9a02c1f6ad78d792f1c74ddb6537915"
+    },
+    "cellboard.Rcheck/cellboard/R/cellboard": {
+      "checksum": "d6c68f1fe41ced6e98a766a3757313da"
+    },
+    "cellboard.Rcheck/cellboard/R/cellboard.rdb": {
+      "checksum": "ffa10822cd771d6ce8519bde2c2f28a2"
+    },
+    "cellboard.Rcheck/cellboard/R/cellboard.rdx": {
+      "checksum": "6d0c5040768eb3ab3817790282d59875"
+    },
+    "cellboard.Rcheck/cellboard/README.md": {
+      "checksum": "698201c70905299eb555644529bae0ca"
+    },
+    "cellboard.Rcheck/cellboard/report/qc_report.Rmd": {
+      "checksum": "412fe41f287eca56fb3186add9865d2b"
+    },
+    "cellboard.Rcheck/tests/startup.Rs": {
+      "checksum": "14e3c5b3d49f164cf0bc8dcd3cf2fd78"
+    },
+    "cellboard.Rcheck/tests/testthat.R": {
+      "checksum": "5de2c1d070e1d8527290a7a0955f3d16"
+    },
+    "cellboard.Rcheck/tests/testthat.Rout": {
+      "checksum": "fb356abecf527145ecbeb33e309062e8"
+    },
+    "cellboard.Rcheck/tests/testthat/helper-cellboard.R": {
+      "checksum": "6f2a51d73185604b7eb9e29a7ebca01a"
+    },
+    "cellboard.Rcheck/tests/testthat/test-app.R": {
+      "checksum": "79983c3ce4ae5e3dc45659ad41ea1139"
+    },
+    "cellboard.Rcheck/tests/testthat/test-io.R": {
+      "checksum": "99d4d314e9468790e23d8d994e4413e7"
+    },
+    "cellboard.Rcheck/tests/testthat/test-plots.R": {
+      "checksum": "8754ebd6ab93037a8cf575e6f05a006d"
+    },
+    "cellboard.Rcheck/tests/testthat/test-qc-metrics.R": {
+      "checksum": "fe490e1ea769874384bcf22e8d8aad25"
+    },
+    "cellboard.Rcheck/tests/testthat/test-report.R": {
+      "checksum": "4e85634289ffedbe9d08b24a95c02cd1"
+    },
+    "cellboard.Rcheck/tests/testthat/test-seurat.R": {
+      "checksum": "a554be98354eadade8359bd13651ebb7"
+    },
+    "cellboard.Rcheck/tests/testthat/test-thresholds.R": {
+      "checksum": "21f0d469ba3a8ba733d03cb86482a7b6"
+    },
+    "cellboard_0.1.0.tar.gz": {
+      "checksum": "f4d5d669c6c61b7dc97b038069e29bf2"
+    },
     "DESCRIPTION": {
-      "checksum": "d405245a1f213ebe1ecf49a3a2082377"
+      "checksum": "07db81853234556bb0338ad4060f1a17"
     },
     "inst/extdata/pbmc_small_10x/barcodes.tsv.gz": {
-      "checksum": "f98346fb0f6bc3b095cdd5347d5aa5cb"
+      "checksum": "fa05dc8efaeb2b0c18188624a41711bb"
     },
     "inst/extdata/pbmc_small_10x/features.tsv.gz": {
-      "checksum": "daabd46ca3ece903b9a11e85df4c103a"
+      "checksum": "dcec2b48a7a0c47dc11b4e83f33923ea"
     },
     "inst/extdata/pbmc_small_10x/matrix.mtx.gz": {
-      "checksum": "c052991f1f910702f55d411544ff0ced"
+      "checksum": "661c5f9b8c6ad6490caa6bb0a917a19e"
     },
     "inst/extdata/pbmc_small_sce.rds": {
-      "checksum": "4c03cba1d13262308094c48742c26910"
+      "checksum": "39851726df97762a5fa90312826f4f84"
     },
     "inst/report/qc_report.Rmd": {
       "checksum": "412fe41f287eca56fb3186add9865d2b"
@@ -6463,16 +6751,16 @@
       "checksum": "b9a02c1f6ad78d792f1c74ddb6537915"
     },
     "R/app_server.R": {
-      "checksum": "4b6a45fae7eaee642f9dbff67ace05fa"
+      "checksum": "a55281e44d889d08e624f0104968b826"
     },
     "R/app_ui.R": {
-      "checksum": "5dc05ca0eab81cf4c696a497d4ba8647"
+      "checksum": "f367fe4f08f3a6cab624e3dff63ebd56"
     },
     "R/cellboard-package.R": {
-      "checksum": "ebc0bd74c0fae2bbaccaa5d72b6bec48"
+      "checksum": "756ada3b5eb6101f816a9302c20de41f"
     },
     "R/io.R": {
-      "checksum": "8677ee5d70096eea4c017a63851c47a6"
+      "checksum": "a16dabfe52fbcadfdd92d21716377df4"
     },
     "R/plots.R": {
       "checksum": "1b8674085d6e7e191ac03de9d8973dc5"
@@ -6490,7 +6778,10 @@
       "checksum": "187fd5b52e797b097ee5eda1b2b0d908"
     },
     "README.md": {
-      "checksum": "698201c70905299eb555644529bae0ca"
+      "checksum": "5833dcc17e1b43de479790b125082b58"
+    },
+    "renv.lock": {
+      "checksum": "9b7d4f94cc7849076e22df17f115b2d6"
     }
   },
   "users": null

@@ -15,9 +15,12 @@ directory (useful for demonstrating \code{\link[=read_10x]{read_10x()}}).}
 A SingleCellExperiment, or a path string.
 }
 \description{
-A small (~250 cell) public-style PBMC subset shipped with the package, handy
-for trying the dashboard and for examples. See \code{data-raw}/\code{dev} for how it is
-generated.
+Returns a stratified 238-cell subset of the \strong{real} 10x Genomics pbmc3k
+dataset (hg19, Cell Ranger v2 output), with 9,936 expressed genes. The
+subset preserves the biologically realistic QC structure of the full dataset:
+a healthy bulk (~2\% mitochondrial reads), a stressed tail, and high-UMI
+outliers, making it suitable for demonstrating cellboard's QC workflow.
+Generated from the full 2,700-cell dataset by \code{dev/make_example_data_real.R}.
 }
 \examples{
 sce <- example_sce()
