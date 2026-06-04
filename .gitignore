@@ -1,0 +1,32 @@
+# R session / history
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Built artifacts
+*.tar.gz
+*.Rcheck/
+/docs/
+/.quarto/
+
+# renv: keep renv.lock, settings and activate.R; ignore the local library
+renv/library/
+renv/local/
+renv/cellar/
+renv/python/
+renv/sandbox/
+renv/staging/
+
+# rsconnect deployment records (machine-specific)
+rsconnect/
+
+# dev helper outputs
+dev/install_log.txt
+dev/install_status.json
+dev/cache/
+dev/*.html
+
+# OS noise
+.DS_Store
+Thumbs.db

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="278" viewBox="0 0 240 278" role="img" aria-label="cellboard">
+  <defs>
+    <style>
+      .cell-keep { fill: #2C7FB8; }
+      .cell-drop { fill: #D95F02; }
+      .name { font-family: 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif; font-weight: 700; }
+    </style>
+  </defs>
+  <!-- hex sticker -->
+  <polygon points="120,4 232,69 232,209 120,274 8,209 8,69"
+           fill="#1f4f6b" stroke="#2C7FB8" stroke-width="8"/>
+  <!-- scattered "cells": blue = retained, orange = discarded -->
+  <g opacity="0.95">
+    <circle class="cell-keep" cx="78"  cy="96"  r="7"/>
+    <circle class="cell-keep" cx="104" cy="84"  r="6"/>
+    <circle class="cell-keep" cx="132" cy="100" r="8"/>
+    <circle class="cell-keep" cx="156" cy="90"  r="6"/>
+    <circle class="cell-keep" cx="92"  cy="118" r="6"/>
+    <circle class="cell-keep" cx="120" cy="124" r="9"/>
+    <circle class="cell-keep" cx="148" cy="116" r="6"/>
+    <circle class="cell-keep" cx="170" cy="112" r="7"/>
+    <circle class="cell-drop" cx="64"  cy="78"  r="6"/>
+    <circle class="cell-drop" cx="178" cy="138" r="6"/>
+    <circle class="cell-drop" cx="86"  cy="142" r="5"/>
+  </g>
+  <!-- threshold line -->
+  <line x1="40" y1="160" x2="200" y2="160" stroke="#D95F02" stroke-width="3" stroke-dasharray="9 7"/>
+  <text class="name" x="120" y="206" text-anchor="middle" font-size="34" fill="#ffffff">cellboard</text>
+  <text class="name" x="120" y="232" text-anchor="middle" font-size="13" fill="#9ec9e2" font-weight="400">single-cell QC</text>
+</svg>

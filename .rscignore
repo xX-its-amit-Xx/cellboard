@@ -1,0 +1,16 @@
+# Files excluded from the Posit Connect bundle (gitignore-style patterns).
+# The app needs: app.R, R/, inst/extdata, inst/report, DESCRIPTION, renv.lock.
+.git
+.github
+dev
+tests
+man
+docs
+vignettes
+.quarto
+rsconnect
+.Rproj.user
+*.Rproj
+*.tar.gz
+.Rbuildignore
+.Rhistory

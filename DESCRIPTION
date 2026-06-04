@@ -1,0 +1,52 @@
+Package: cellboard
+Title: Interactive Single-Cell RNA-seq Quality Control Dashboard
+Version: 0.1.0
+Authors@R:
+    person("Amit", "Shenoy", email = "shenoy.am@husky.neu.edu",
+           role = c("aut", "cre"))
+Description: A Shiny dashboard for interactive quality control (QC) of
+    single-cell RNA-seq data, aimed at bench scientists who want to QC
+    their data without writing code. Load 10x Genomics, SingleCellExperiment,
+    or Seurat input; compute per-cell QC metrics (mitochondrial percentage,
+    genes and UMIs detected, and 'scDblFinder' doublet scores); explore the
+    distributions with interactive plots; set filtering thresholds with live
+    retained-versus-discarded feedback; and export a filtered
+    SingleCellExperiment together with an auto-generated, reproducible
+    R Markdown report. Designed for one-click deployment to Posit Connect.
+License: GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.2)
+Imports:
+    bslib,
+    DT,
+    ggplot2,
+    Matrix,
+    methods,
+    plotly,
+    S4Vectors,
+    scDblFinder,
+    shiny,
+    SingleCellExperiment,
+    stats,
+    SummarizedExperiment,
+    utils
+Suggests:
+    DropletUtils,
+    knitr,
+    rmarkdown,
+    rsconnect,
+    scater,
+    scran,
+    scuttle,
+    Seurat,
+    SeuratObject,
+    testthat (>= 3.0.0)
+biocViews: SingleCell, QualityControl, Transcriptomics, RNASeq,
+    GeneExpression, Preprocessing, Software, ShinyApps
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+URL: https://github.com/ashenoy/cellboard
+BugReports: https://github.com/ashenoy/cellboard/issues
+Config/roxygen2/version: 8.0.0

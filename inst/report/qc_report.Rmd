@@ -1,0 +1,180 @@
+---
+title: "`r report_title`"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M')`"
+output:
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float: true
+    code_folding: hide
+    self_contained: true
+    df_print: kable
+---
+
+<!--
+  cellboard reproducible QC report.
+
+  This template is rendered by cellboard::render_qc_report(), which injects the
+  following objects into the knit environment:
+    sce, thresholds, report_title, sample_name,
+    compute_qc(), apply_qc_filter(), summarise_qc(), qc_metric_cols(),
+    qc_violin(), qc_scatter(), qc_knee(), fmt_int()
+  Re-running render_qc_report() with the same inputs reproduces this document.
+-->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, message = FALSE, warning = FALSE,
+  fig.align = "center", dpi = 96
+)
+suppressPackageStartupMessages({
+  library(ggplot2)
+  requireNamespace("SingleCellExperiment", quietly = TRUE)
+  requireNamespace("SummarizedExperiment", quietly = TRUE)
+})
+
+# Make sure metrics exist; compute them if the caller passed a raw SCE.
+cols <- qc_metric_cols()
+have_metrics <- all(c(cols[["nUMI"]], cols[["nGene"]], cols[["pct_mito"]]) %in%
+                      colnames(SummarizedExperiment::colData(sce)))
+if (!have_metrics) {
+  sce <- compute_qc(sce)
+}
+
+res     <- apply_qc_filter(sce, thresholds)
+summ    <- summarise_qc(res)
+sce_ann <- res$sce
+qc_meta <- S4Vectors::metadata(sce)$cellboard$qc
+```
+
+## Dataset overview {#overview}
+
+**Sample:** `r sample_name`
+
+```{r overview}
+ov <- data.frame(
+  Property = c("Genes (features)", "Cells (barcodes)", "Assays",
+               "Mitochondrial genes matched", "Doublet detection (scDblFinder)"),
+  Value = c(
+    fmt_int(nrow(sce)),
+    fmt_int(ncol(sce)),
+    paste(SummarizedExperiment::assayNames(sce), collapse = ", "),
+    if (is.null(qc_meta)) "-" else as.character(qc_meta$n_mito_genes),
+    if (is.null(qc_meta)) "-" else if (isTRUE(qc_meta$ran_doublets)) "yes" else "no"
+  ),
+  check.names = FALSE
+)
+knitr::kable(ov, align = c("l", "r"))
+```
+
+## QC metric distributions {#distributions}
+
+Dashed red lines mark the active thresholds. Points are coloured by whether the
+cell is **retained** or **discarded** under the current thresholds.
+
+```{r violins, fig.show = "hold", out.width = "48%", fig.height = 4}
+for (m in c("pct_mito", "nGene", "nUMI", "doublet_score")) {
+  print(qc_violin(sce_ann, m, thresholds = thresholds))
+}
+```
+
+```{r scatter-knee, fig.show = "hold", out.width = "48%", fig.height = 4.2}
+print(qc_scatter(sce_ann, "nUMI", "nGene", colour = "status", thresholds = thresholds))
+print(qc_knee(sce_ann, thresholds = thresholds))
+```
+
+## Thresholds applied {#thresholds}
+
+```{r thresholds-table}
+th <- thresholds
+rows <- list(
+  list("Minimum genes / cell",        th$min_genes),
+  list("Maximum genes / cell",        th$max_genes),
+  list("Minimum UMIs / cell",         th$min_umi),
+  list("Maximum UMIs / cell",         th$max_umi),
+  list("Maximum mitochondrial %",     th$max_mito),
+  list("Maximum doublet score",       th$max_doublet),
+  list("Remove scDblFinder doublets", if (isTRUE(th$remove_doublet_class)) "yes" else "no")
+)
+tbl <- do.call(rbind, lapply(rows, function(r) {
+  data.frame(Threshold = r[[1]],
+             Value = if (is.null(r[[2]]) || length(r[[2]]) == 0) "(inactive)" else as.character(r[[2]]),
+             stringsAsFactors = FALSE)
+}))
+knitr::kable(tbl, align = c("l", "r"))
+```
+
+## Filtering outcome {#outcome}
+
+```{r totals}
+knitr::kable(summ$totals, col.names = c("", "Cells"), align = c("l", "r"))
+```
+
+```{r retained-bar, fig.height = 1.6, fig.width = 7}
+tot <- summ$totals$value
+bar <- data.frame(
+  status = factor(c("Retained", "Discarded"), levels = c("Discarded", "Retained")),
+  cells  = c(tot[2], tot[3])
+)
+ggplot(bar, aes(x = "", y = cells, fill = status)) +
+  geom_col(width = 0.5) +
+  coord_flip() +
+  scale_fill_manual(values = c(Retained = "#2C7FB8", Discarded = "#D95F02"), name = NULL) +
+  labs(x = NULL, y = "Cells") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "top", panel.grid = element_blank())
+```
+
+**`r fmt_int(res$n_keep)`** of **`r fmt_int(res$n_total)`** cells
+(`r summ$totals$value[4]`%) pass QC.
+
+### Cells failing each filter {#by-reason}
+
+A cell may fail more than one filter, so these counts can sum to more than the
+number of discarded cells.
+
+```{r by-reason}
+if (nrow(summ$by_reason)) {
+  knitr::kable(summ$by_reason[, c("description", "cells_failing")],
+               col.names = c("Filter", "Cells failing"), align = c("l", "r"))
+} else {
+  cat("No active filters.\n")
+}
+```
+
+## Reproduce this analysis {#reproduce}
+
+Running the snippet below on the same input reproduces this report's filtering
+with the exact thresholds used here:
+
+```{r repro-code, results = "asis"}
+mk <- function(name, val) {
+  if (is.null(val) || length(val) == 0) return(NULL)
+  sprintf("  %-20s = %s", name, format(val))
+}
+args <- c(
+  mk("min_genes", th$min_genes),
+  mk("max_genes", th$max_genes),
+  mk("min_umi",   th$min_umi),
+  mk("max_umi",   th$max_umi),
+  mk("max_mito",  th$max_mito),
+  mk("max_doublet", th$max_doublet),
+  sprintf("  %-20s = %s", "remove_doublet_class", isTRUE(th$remove_doublet_class))
+)
+code <- paste0(
+  "library(cellboard)\n",
+  "sce <- read_input(\"<your-input>\")   # 10x dir, .h5, or .rds (SCE/Seurat)\n",
+  "sce <- compute_qc(sce)                # mito %, nGene, nUMI, doublet score\n",
+  "th  <- qc_thresholds(\n",
+  paste(args, collapse = ",\n"), "\n)\n",
+  "res <- apply_qc_filter(sce, th)\n",
+  "saveRDS(res$filtered, \"filtered_sce.rds\")\n"
+)
+cat("```r\n", code, "```\n", sep = "")
+```
+
+## Session information {#session}
+
+```{r session}
+sessionInfo()
+```

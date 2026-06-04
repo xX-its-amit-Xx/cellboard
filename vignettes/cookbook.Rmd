@@ -1,0 +1,276 @@
+---
+title: "cellboard cookbook: QC a PBMC dataset from scratch"
+author: "Amit Shenoy"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{cellboard cookbook: QC a PBMC dataset from scratch}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>",
+  fig.width = 7, fig.height = 4, dpi = 96, message = FALSE, warning = FALSE
+)
+```
+
+This cookbook walks through a complete single-cell QC session with **cellboard**:
+load a public PBMC dataset, inspect its quality, choose thresholds, export a
+filtered object, and render a reproducible report — first as code, then in the
+point-and-click [dashboard](#dashboard). Two bonus sections show how to
+[schedule the report on Posit Connect](#schedule) and how to
+[slot cellboard into an existing Seurat pipeline](#seurat).
+
+```{r library}
+library(cellboard)
+```
+
+## 1. Get a real PBMC dataset {#data}
+
+The canonical teaching dataset is 10x Genomics' **pbmc3k** (~2,700 peripheral
+blood mononuclear cells). This vignette downloads the **real** data straight
+from 10x and caches it under `tools::R_user_dir()`, falling back to the bundled
+example only if the download is unavailable (e.g. a fully offline build):
+
+```{r get-data}
+get_pbmc3k <- function() {
+  cache <- tools::R_user_dir("cellboard", "cache")
+  dir.create(cache, recursive = TRUE, showWarnings = FALSE)
+  mtx_parent <- file.path(cache, "filtered_gene_bc_matrices")
+  if (!dir.exists(mtx_parent)) {
+    tar <- file.path(cache, "pbmc3k.tar.gz")
+    url <- paste0("https://cf.10xgenomics.com/samples/cell/pbmc3k/",
+                  "pbmc3k_filtered_gene_bc_matrices.tar.gz")
+    options(timeout = max(600, getOption("timeout")))
+    utils::download.file(url, tar, mode = "wb", quiet = TRUE)
+    utils::untar(tar, exdir = cache)
+  }
+  read_input(mtx_parent)   # read_input() descends into the nested hg19/ folder
+}
+
+sce <- tryCatch(get_pbmc3k(), error = function(e) {
+  message("pbmc3k download unavailable (", conditionMessage(e),
+          "); using the bundled example instead.")
+  example_sce()
+})
+sce
+```
+
+```{r which-data, echo = FALSE, results = "asis"}
+if (ncol(sce) > 1500) {
+  cat(sprintf("> Loaded the **real 10x pbmc3k** dataset: %d genes x %d cells.\n",
+              nrow(sce), ncol(sce)))
+} else {
+  cat(sprintf(paste0("> Download unavailable -- using the bundled simulated ",
+                     "example (%d cells). Every step below is identical.\n"),
+              ncol(sce)))
+}
+```
+
+Other ways to obtain the same object:
+
+```{r download-alt, eval = FALSE}
+## From Bioconductor (downloads via ExperimentHub):
+BiocManager::install("TENxPBMCData")
+sce <- TENxPBMCData::TENxPBMCData("pbmc3k")
+
+## You already have an .rds or a Seurat object:
+sce <- read_input("my_sce.rds")
+sce <- read_input("my_seurat.rds", type = "seurat")
+```
+
+`read_input()` always returns a `SingleCellExperiment` with a `counts` assay,
+whether you start from a 10x directory (it descends into nested matrix folders
+such as `hg19/`), a `.h5` file, an existing SCE, or a Seurat object.
+
+## 2. Compute QC metrics {#compute}
+
+`compute_qc()` adds four standardised per-cell metrics to `colData`:
+`nUMI`, `nGene`, `pct_mito`, and an `scDblFinder` `doublet_score` /
+`doublet_class`.
+
+```{r compute}
+sce <- compute_qc(sce)               # mito pattern defaults to ^MT-/^mt-
+
+cd <- as.data.frame(SummarizedExperiment::colData(sce))
+round(sapply(cd[, c("nUMI", "nGene", "pct_mito", "doublet_score")], summary), 2)
+```
+
+Mitochondrial genes are matched against gene **symbols** (from a `Symbol`-like
+`rowData` column when present, else the row names), so this works whether your
+features are Ensembl IDs or symbols. For mouse, pass `mito_pattern = "^mt-"`.
+
+## 3. Inspect the distributions {#inspect}
+
+The same plot helpers the dashboard uses are exported, so you can eyeball QC
+before deciding on cutoffs:
+
+```{r violins, fig.height = 3.4}
+qc_violin(sce, "pct_mito")
+qc_violin(sce, "nGene")
+```
+
+```{r knee, fig.height = 3.6}
+qc_knee(sce)   # barcode-rank plot
+```
+
+In pbmc3k most cells are healthy (median ~2% mitochondrial reads); a tail sits
+at high mitochondrial percentage (dying or lysed cells) and `scDblFinder` flags
+a small set of likely doublets -- exactly what the thresholds below remove.
+
+## 4. Choose thresholds {#thresholds}
+
+`default_thresholds()` gives a conservative starting point (and can suggest an
+upper UMI bound from the data). Here we use the cutoffs from the classic Seurat
+pbmc3k tutorial -- 200-2,500 genes and < 5% mitochondrial reads -- and
+additionally drop scDblFinder-called doublets. A cell is discarded if it fails
+**any** active threshold.
+
+```{r thresholds}
+th <- qc_thresholds(
+  min_genes            = 200,
+  max_genes            = 2500,
+  max_mito             = 5,
+  remove_doublet_class = TRUE   # drop scDblFinder-called doublets
+)
+
+res <- apply_qc_filter(sce, th)
+c(input = res$n_total, retained = res$n_keep, discarded = res$n_discard)
+```
+
+`summarise_qc()` breaks down *why* cells were dropped (a cell can fail more than
+one filter):
+
+```{r summarise}
+s <- summarise_qc(res)
+knitr::kable(s$by_reason)
+```
+
+Visualise the decision. Points are coloured retained vs discarded, with the
+threshold lines overlaid:
+
+```{r scatter, fig.height = 4.2}
+qc_scatter(res$sce, "nUMI", "nGene", colour = "status", thresholds = th)
+```
+
+Tightening a threshold can only ever remove more cells — handy when calibrating:
+
+```{r monotone}
+strict <- apply_qc_filter(sce, qc_thresholds(min_genes = 500, max_mito = 5))
+c(lenient = res$n_keep, strict = strict$n_keep)
+```
+
+## 5. Export the filtered object {#export}
+
+```{r export, eval = FALSE}
+filtered <- res$filtered             # a filtered SingleCellExperiment
+saveRDS(filtered, "pbmc_filtered_sce.rds")
+
+# per-cell metrics, e.g. for a supplementary table
+write.csv(as.data.frame(SummarizedExperiment::colData(res$sce)),
+          "pbmc_cell_metrics.csv")
+```
+
+```{r export-dims}
+dim(res$filtered)
+```
+
+## 6. Render the reproducible report {#report}
+
+`render_qc_report()` knits a self-contained HTML report documenting the metrics,
+the thresholds, and the retained-vs-discarded outcome. Re-running it with the
+same inputs reproduces the document byte-for-byte (modulo timestamps).
+
+```{r report, eval = FALSE}
+render_qc_report(
+  res$sce, th,
+  output_file = "pbmc_qc_report.html",
+  sample_name = "pbmc3k"
+)
+```
+
+## 7. ...or do all of this in the dashboard {#dashboard}
+
+Every step above is available point-and-click:
+
+```{r run-app, eval = FALSE}
+run_app()
+```
+
+Click **Load example PBMC** (or upload your data), press **Compute QC metrics**,
+then drag the threshold sliders on the **Filtering** tab and watch the plots,
+KPI boxes and cell table update live. The **Export** tab downloads the filtered
+object, the metrics CSV, and the HTML report.
+
+## Bonus: schedule the report on Posit Connect {#schedule}
+
+The report template is a parameterised R Markdown document, so Connect can run
+it on a schedule.
+
+1. **Publish the template.** From the RStudio IDE, open
+   `inst/report/qc_report.Rmd` and click *Publish*, or:
+
+    ```{r connect-publish, eval = FALSE}
+    rsconnect::deployDoc("inst/report/qc_report.Rmd")
+    ```
+
+2. **Schedule it.** In Connect, open the published report →
+   *Settings → Schedule → Run report on a schedule* (e.g. weekly), and add
+   e-mail recipients under *Sharing*. Connect re-knits the report on the
+   schedule and e-mails the refreshed HTML.
+
+3. **Parameterise per run.** The report reads its data and thresholds from the
+   knit environment; to point a scheduled run at fresh data, deploy a thin
+   wrapper `.Rmd` that calls `cellboard::render_qc_report()` on a path your
+   pipeline updates (e.g. the latest run's `.rds` on a shared mount).
+
+The whole **dashboard** deploys the same way — see the README's
+*Deploy to Posit Connect* section (`rsconnect::deployApp()` or the included
+`deploy-connect` GitHub Action).
+
+## Bonus: integrate with an existing Seurat pipeline {#seurat}
+
+cellboard speaks `SingleCellExperiment`, but converts Seurat objects for you.
+Drop it into a Seurat workflow to QC with `scDblFinder` and carry the decision
+back:
+
+```{r seurat, message = FALSE, warning = FALSE}
+library(Seurat)
+
+# Pretend this came from your pipeline (here: build a small one from the example)
+counts      <- SummarizedExperiment::assay(example_sce(), "counts")
+seurat_obj  <- SeuratObject::CreateSeuratObject(counts = counts)
+
+# 1. hand the object to cellboard
+sce <- as_sce(seurat_obj)            # Seurat -> SingleCellExperiment
+sce <- compute_qc(sce)
+
+# 2. decide which cells to keep
+keep <- apply_qc_filter(sce, qc_thresholds(min_genes = 200, max_mito = 10))$keep
+
+# 3. carry the decision back into the Seurat object
+seurat_qc <- seurat_obj[, keep]
+seurat_qc
+```
+
+You can also push cellboard's metrics back as Seurat metadata:
+
+```{r seurat-meta}
+md <- as.data.frame(SummarizedExperiment::colData(sce))[, c("nUMI", "nGene", "pct_mito")]
+seurat_obj <- SeuratObject::AddMetaData(seurat_obj, md)
+head(seurat_obj[[]], 3)
+```
+
+From here, continue your normal Seurat (or Bioconductor `scran`/`scater`)
+analysis on the QC'd cells.
+
+## Session information
+
+```{r session}
+sessionInfo()
+```

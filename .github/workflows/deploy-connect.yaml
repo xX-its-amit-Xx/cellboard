@@ -1,0 +1,64 @@
+# Build a Posit Connect manifest and (optionally) deploy.
+#
+# The manifest is always generated and uploaded as a build artifact, so this
+# workflow is useful even without a Connect server configured. Deployment runs
+# only when the CONNECT_SERVER and CONNECT_API_KEY repository secrets are set.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+name: deploy-connect
+
+permissions: read-all
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CONNECT_SERVER: ${{ secrets.CONNECT_SERVER }}
+      CONNECT_API_KEY: ${{ secrets.CONNECT_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rsconnect
+          # install the app's own dependencies so the manifest pins real versions
+          dependencies: '"all"'
+
+      - name: Write Connect manifest.json
+        run: Rscript -e 'rsconnect::writeManifest(appDir = ".", appPrimaryDoc = "app.R")'
+
+      - name: Upload manifest as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: connect-manifest
+          path: manifest.json
+
+      - name: Deploy to Posit Connect
+        if: ${{ env.CONNECT_SERVER != '' && env.CONNECT_API_KEY != '' }}
+        run: |
+          Rscript -e '
+            rsconnect::addConnectServer(url = Sys.getenv("CONNECT_SERVER"), name = "connect")
+            rsconnect::connectApiUser(
+              account = "ci", server = "connect",
+              apiKey  = Sys.getenv("CONNECT_API_KEY")
+            )
+            rsconnect::deployApp(
+              appDir        = ".",
+              appName       = "cellboard",
+              appTitle      = "cellboard - single-cell QC",
+              appPrimaryDoc = "app.R",
+              server        = "connect",
+              forceUpdate   = TRUE
+            )
+          '
